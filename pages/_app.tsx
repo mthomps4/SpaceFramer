@@ -1,6 +1,7 @@
 import React from 'react';
 import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
 
 import { AllProviders } from '../components/AllProviders';
 import { useAuth } from '../context/auth';
@@ -17,11 +18,21 @@ const LoggedOutLayout = dynamic(() =>
   import('../layouts/LoggedOut').then((mod) => mod.LoggedOutLayout)
 );
 
+const BlankLayout = dynamic(() => import('../layouts/Blank').then((mod) => mod.BlankLayout));
+
 /**
  * Renders a layout depending on the result of the useAuth hook
  */
 function AppWithAuth({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
+
+  const router = useRouter();
+
+  const path = router.pathname;
+
+  if (path === '/space') {
+    return <BlankLayout>{children}</BlankLayout>;
+  }
 
   return user ? (
     <LoggedInLayout>{children}</LoggedInLayout>
